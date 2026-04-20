@@ -312,7 +312,9 @@ tr:hover td { background: #fafafa; }
 
 <script>
 // ─── CONFIG ───────────────────────────────
-const ML_BASE = 'https://api.mercadolibre.com';
+// PROXY_BASE: desplegá worker.js en Cloudflare Workers y reemplazá esta URL
+const PROXY_BASE = 'https://TU_WORKER.TU_USUARIO.workers.dev';
+const ML_BASE    = 'https://api.mercadolibre.com';
 const ML_SITE = 'MLA';
 
 // ─── AUTH ─────────────────────────────────
@@ -425,11 +427,13 @@ async function doSearch() {
   setProgress(30);
 
   try {
-    // access_token como query param: ML lo acepta como alternativa al header Bearer,
-    // evitando el preflight CORS que bloquea Authorization
-    const tok = `&access_token=${encodeURIComponent(mlToken)}`;
+    // Las búsquedas van al proxy (Cloudflare Worker) que reenvía a ML con Authorization header.
+    // ML bloquea Authorization desde browsers via CORS, pero server→ML no tiene restricción.
+    const authHeaders = { 'Authorization': `Bearer ${mlToken}` };
+
     let res = await fetch(
-      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance${tok}`
+      `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`,
+      { headers: authHeaders }
     );
 
     if (res.status === 401) {
@@ -441,7 +445,8 @@ async function doSearch() {
 
     if (!res.ok) {
       res = await fetch(
-        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance${tok}`
+        `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`,
+        { headers: authHeaders }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
