@@ -202,39 +202,41 @@ tr:hover td { background: #fafafa; }
 <div class="setup-screen" id="setupScreen">
   <div class="setup-ico">🔐</div>
   <h2>Conectá tu cuenta de ML</h2>
-  <p>La API de Mercado Libre requiere autenticación. Ingresá tu App ID y conectate con un click.</p>
+  <p>La API de Mercado Libre requiere autenticación. Ingresá tu Client ID y Client Secret de ML Developers.</p>
 
   <div class="setup-steps">
     <div class="setup-step">
       <div class="snum">1</div>
       <div class="stext">
-        <strong>Pegá tu App ID de ML Developers</strong>
-        Es el número que aparece en <code>developers.mercadolibre.com.ar</code> al entrar a tu aplicación.
+        <strong>Entrá a developers.mercadolibre.com.ar</strong>
+        Creá o seleccioná tu aplicación. Copiá el <code>Client ID</code> y el <code>Client Secret</code>.
       </div>
     </div>
     <div class="setup-step">
       <div class="snum">2</div>
       <div class="stext">
-        <strong>Hacé clic en "Guardar y conectar"</strong>
-        Te redirige a ML para autorizar. Iniciás sesión con tu cuenta normal de ML.
+        <strong>Pegá ambos valores abajo y hacé clic en "Obtener token"</strong>
+        La app llama directamente a la API de ML y obtiene un token de acceso.
       </div>
     </div>
     <div class="setup-step">
       <div class="snum">3</div>
       <div class="stext">
-        <strong>Volvés automáticamente a la app</strong>
-        Ya podés buscar productos reales. El token dura 6 horas.
+        <strong>¡Listo! Ya podés buscar productos reales</strong>
+        Las credenciales se guardan en tu navegador. El token dura 6 horas.
       </div>
     </div>
   </div>
 
-  <div class="appid-input-row">
-    <input type="text" id="appIdInput" placeholder="Ej: 1234567890" />
-    <button class="btn-big" onclick="saveAndConnect()">Guardar y conectar →</button>
+  <div class="fg" style="margin-bottom:8px;">
+    <input type="text" id="clientIdInput" placeholder="Client ID (ej: 1234567890)" style="margin-bottom:8px;" />
+    <input type="text" id="clientSecretInput" placeholder="Client Secret" />
   </div>
+  <div id="setupErr" class="err"></div>
+  <button class="btn-big" onclick="saveAndConnect()">Obtener token →</button>
 
-  <p style="font-size:11px;color:var(--muted);font-family:'Lora',serif;font-style:italic;">
-    El App ID se guarda en tu navegador. No se comparte con nadie.
+  <p style="font-size:11px;color:var(--muted);font-family:'Lora',serif;font-style:italic;margin-top:14px;">
+    Las credenciales se guardan solo en tu navegador. No se comparten con nadie.
   </p>
 </div>
 
@@ -314,28 +316,19 @@ const ML_BASE = 'https://api.mercadolibre.com';
 const ML_SITE = 'MLA';
 
 // ─── AUTH ─────────────────────────────────
-let mlToken = sessionStorage.getItem('ml_token') || null;
-let appId   = localStorage.getItem('ml_app_id')  || '';
+let mlToken      = sessionStorage.getItem('ml_token')         || null;
+let clientId     = localStorage.getItem('ml_client_id')       || '';
+let clientSecret = localStorage.getItem('ml_client_secret')   || '';
 
-// Leer token del hash/params al volver de ML
-(function checkCallback() {
-  const hash   = new URLSearchParams(window.location.hash.replace('#',''));
-  const search = new URLSearchParams(window.location.search);
-  const token  = hash.get('access_token') || search.get('access_token');
-  if (token) {
-    mlToken = token;
-    sessionStorage.setItem('ml_token', token);
-    history.replaceState(null, '', window.location.pathname);
-  }
-  initUI();
-})();
+initUI();
 
 function initUI() {
   const hasToken = !!mlToken;
   document.getElementById('setupScreen').classList.toggle('show', !hasToken);
   document.getElementById('appLayout').style.display = hasToken ? 'grid' : 'none';
   updateAuthBadge();
-  if (appId) document.getElementById('appIdInput').value = appId;
+  if (clientId)     document.getElementById('clientIdInput').value     = clientId;
+  if (clientSecret) document.getElementById('clientSecretInput').value = clientSecret;
 }
 
 function updateAuthBadge() {
@@ -353,24 +346,43 @@ function updateAuthBadge() {
   }
 }
 
-function saveAndConnect() {
-  const id = document.getElementById('appIdInput').value.trim();
-  if (!id) { alert('Ingresá tu App ID primero.'); return; }
-  localStorage.setItem('ml_app_id', id);
-  appId = id;
-  redirectToML();
+async function saveAndConnect() {
+  const id     = document.getElementById('clientIdInput').value.trim();
+  const secret = document.getElementById('clientSecretInput').value.trim();
+  const errEl  = document.getElementById('setupErr');
+  errEl.classList.remove('on');
+  if (!id || !secret) { errEl.textContent = 'Ingresá Client ID y Client Secret.'; errEl.classList.add('on'); return; }
+  localStorage.setItem('ml_client_id',     id);
+  localStorage.setItem('ml_client_secret', secret);
+  clientId = id; clientSecret = secret;
+  await fetchToken();
+}
+
+async function fetchToken() {
+  const errEl = document.getElementById('setupErr');
+  setLoader(true, 'Obteniendo token de Mercado Libre...');
+  try {
+    const res = await fetch('https://api.mercadolibre.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+    mlToken = data.access_token;
+    sessionStorage.setItem('ml_token', mlToken);
+    initUI();
+  } catch(e) {
+    errEl.textContent = 'Error obteniendo token: ' + e.message;
+    errEl.classList.add('on');
+  } finally {
+    setLoader(false);
+  }
 }
 
 function handleAuthClick() {
-  if (mlToken) return; // ya conectado
-  if (appId) { redirectToML(); return; }
-  // scroll a setup
+  if (mlToken) return;
   document.getElementById('setupScreen').scrollIntoView({ behavior: 'smooth' });
-}
-
-function redirectToML() {
-  const redirect = encodeURIComponent(window.location.href.split('?')[0].split('#')[0]);
-  window.location.href = `https://auth.mercadolibre.com.ar/authorization?response_type=token&client_id=${appId}&redirect_uri=${redirect}`;
 }
 
 function disconnectML() {
