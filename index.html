@@ -427,26 +427,14 @@ async function doSearch() {
   setProgress(30);
 
   try {
-    // Las búsquedas van al proxy (Cloudflare Worker) que reenvía a ML con Authorization header.
-    // ML bloquea Authorization desde browsers via CORS, pero server→ML no tiene restricción.
-    const authHeaders = { 'Authorization': `Bearer ${mlToken}` };
-
+    // El worker maneja el auth con sus propias credenciales — no enviamos headers custom.
     let res = await fetch(
-      `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`,
-      { headers: authHeaders }
+      `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`
     );
-
-    if (res.status === 401) {
-      mlToken = null; sessionStorage.removeItem('ml_token');
-      initUI();
-      setErr('Tu sesión de ML expiró. Conectate nuevamente.');
-      return;
-    }
 
     if (!res.ok) {
       res = await fetch(
-        `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`,
-        { headers: authHeaders }
+        `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
