@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Research ML · mol&mom</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0e0e0e;
+    --white: #f5f2ed;
+    --accent: #c8ff00;
+    --muted: #888;
+    --card-bg: #161616;
+    --border: #2a2a2a;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .logo span { color: var(--accent); }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    max-width: 600px;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .step-tab {
+    flex: 1;
+    min-width: 120px;
+    padding: 16px 20px;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-tab:last-child { border-right: none; }
+  .step-tab:hover { background: #1a1a1a; }
+  .step-tab.active { background: #1e1e1e; border-bottom: 2px solid var(--accent); }
+  .step-tab.done .step-num { background: var(--accent); color: var(--black); }
+
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .step-tab.active .step-num { background: var(--accent); color: var(--black); }
+
+  .step-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .step-tab.active .step-label { color: var(--white); }
+
+  /* MAIN CONTENT */
+  main {
+    padding: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .step-content { display: none; }
+  .step-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* STEP HEADER */
+  .step-header {
+    margin-bottom: 32px;
+  }
+
+  .step-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+  }
+
+  .step-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .step-header p {
+    font-size: 15px;
+    color: #aaa;
+    line-height: 1.6;
+    max-width: 620px;
+  }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+
+  .card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .card p, .card li {
+    font-size: 13px;
+    color: #999;
+    line-height: 1.6;
+  }
+
+  .card ul { list-style: none; padding: 0; }
+  .card ul li { padding: 4px 0; border-bottom: 1px solid #1f1f1f; }
+  .card ul li:last-child { border-bottom: none; }
+  .card ul li::before { content: '→ '; color: var(--accent); }
+
+  /* URL BOX */
+  .url-box {
+    background: #111;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .url-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .url-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--white);
+    word-break: break-all;
+    flex: 1;
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .check-box {
+    width: 20px; height: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+    background: transparent;
+  }
+
+  .checklist li.checked .check-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--black);
+  }
+
+  .checklist li.checked .check-text { color: #555; text-decoration: line-through; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: #141f00;
+    border: 1px solid #2d4400;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .highlight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .highlight p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.6;
+  }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    background: #111;
+  }
+
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #ccc;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .data-table tr:hover td { background: #141414; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tag-green { background: #1a3300; color: #7fff00; }
+  .tag-yellow { background: #2a2200; color: #ffd700; }
+  .tag-red { background: #2a0a0a; color: #ff6b6b; }
+
+  /* SCORE INPUTS */
+  .score-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+
+  .score-section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .score-label {
+    font-size: 13px;
+    color: #aaa;
+    min-width: 180px;
+  }
+
+  .score-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .score-btn {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+  }
+
+  .score-btn:hover { border-color: var(--accent); color: var(--white); }
+  .score-btn.selected { background: var(--accent); color: var(--black); border-color: var(--accent); font-weight: 600; }
+
+  .score-total {
+    background: #111;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .score-total-label { font-size: 13px; color: var(--muted); }
+
+  .score-total-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--accent);
+  }
+
+  .score-verdict {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-left: 12px;
+  }
+
+  /* NAV BUTTONS */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--black);
+  }
+
+  .btn-primary:hover { background: #d4ff1a; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--white); border-color: #555; }
+
+  /* PRODUCT LIST */
+  .product-candidates {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .product-row {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .product-row:hover { border-color: #444; }
+  .product-row.selected { border-color: var(--accent); background: #141f00; }
+
+  .product-emoji { font-size: 24px; }
+
+  .product-info { flex: 1; }
+  .product-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .product-desc { font-size: 12px; color: #777; }
+
+  .product-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+  @media (max-width: 600px) {
+    header { padding: 28px 20px 20px; }
+    main { padding: 24px 20px; }
+    .step-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">mol<span>&</span>mom · guía de research</div>
+    <h1>Cómo encontrar el <em>producto correcto</em> en ML</h1>
+  </div>
+  <div class="header-meta">5 pasos<br>~30 min de trabajo</div>
+</header>
+
+<div class="progress-bar">
+  <div class="step-tab active" onclick="goTo(0)">
+    <div class="step-num">1</div>
+    <div class="step-label">Candidatos</div>
+  </div>
+  <div class="step-tab" onclick="goTo(1)">
+    <div class="step-num">2</div>
+    <div class="step-label">Espiar ML</div>
+  </div>
+  <div class="step-tab" onclick="goTo(2)">
+    <div class="step-num">3</div>
+    <div class="step-label">Qué mirar</div>
+  </div>
+  <div class="step-tab" onclick="goTo(3)">
+    <div class="step-num">4</div>
+    <div class="step-label">Puntuar</div>
+  </div>
+  <div class="step-tab" onclick="goTo(4)">
+    <div class="step-num">5</div>
+    <div class="step-label">Decisión</div>
+  </div>
+</div>
+
+<main>
+
+<!-- STEP 1: CANDIDATOS -->
+<div class="step-content active" id="step-0">
+  <div class="step-header">
+    <div class="step-eyebrow">Paso 1 de 5</div>
+    <h2>Elegí tus productos candidatos</h2>
+    <p>Antes de abrir ML, necesitás una lista inicial. Estos son los 8 productos del rubro mascotas que mejor encajan con tu modelo: barco, U$S 2.000 y ML Argentina.</p>
+  </div>
+
+  <p style="font-size:13px; color:#888; margin-bottom:16px;">Seleccioná 3 para investigar en profundidad →</p>
+
+  <div class="product-candidates">
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🦮</div>
+      <div class="product-info">
+        <div class="product-name">Arneses y correas</div>
+        <div class="product-desc">Alta rotación, liviano, muchas variantes de talle/color</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Liviano</span>
+          <span class="tag tag-green">Alta rotación</span>
+          <span class="tag tag-yellow">Competencia alta</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🍽️</div>
+      <div class="product-info">
+        <div class="product-name">Comederos automáticos / con temporizador</div>
+        <div class="product-desc">Ticket más alto, diferenciación posible, demanda constante</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Ticket alto</span>
+          <span class="tag tag-green">Diferenciable</span>
+          <span class="tag tag-yellow">Más frágil</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🛏️</div>
+      <div class="product-info">
+        <div class="product-name">Camas y colchonetas</div>
+        <div class="product-desc">Voluminoso pero margen sano, regalo frecuente</div>
+        <div class="product-tags">
+          <span class="tag tag-yellow">Voluminoso</span>
+          <span class="tag tag-green">Margen bueno</span>
+          <span class="tag tag-green">Regalo frecuente</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🧸</div>
+      <div class="product-info">
+        <div class="product-name">Juguetes interactivos (gatos/perros)</div>
+        <div class="product-desc">Muy liviano, precio bajo en China, alta rotación</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Muy liviano</span>
+          <span class="tag tag-green">Barato en China</span>
+          <span class="tag tag-red">Margen justo</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">✂️</div>
+      <div class="product-info">
+        <div class="product-name">Kit de higiene y grooming</div>
+        <div class="product-desc">Cortauñas, cepillos, sets combo — compra recurrente</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Recurrente</span>
+          <span class="tag tag-green">Liviano</span>
+          <span class="tag tag-yellow">Sets = más trabajo</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🎒</div>
+      <div class="product-info">
+        <div class="product-name">Bolso/mochila transportadora</div>
+        <div class="product-desc">Ticket alto, diferenciación por diseño, regalo premium</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Ticket alto</span>
+          <span class="tag tag-green">Diferenciable</span>
+          <span class="tag tag-yellow">Más espacio</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🚿</div>
+      <div class="product-info">
+        <div class="product-name">Bañera plegable / tina de baño</div>
+        <div class="product-desc">Nicho claro, menos competencia, producto aspiracional</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Menos competencia</span>
+          <span class="tag tag-yellow">Más volumen</span>
+          <span class="tag tag-yellow">Nicho</span>
+        </div>
+      </div>
+    </div>
+    <div class="product-row" onclick="toggleProduct(this)">
+      <div class="product-emoji">🚰</div>
+      <div class="product-info">
+        <div class="product-name">Bebedero fuente (filtro circulante)</div>
+        <div class="product-desc">Alto percibido, diferenciación tech, ticket premium</div>
+        <div class="product-tags">
+          <span class="tag tag-green">Premium</span>
+          <span class="tag tag-green">Tech diferenciado</span>
+          <span class="tag tag-red">Frágil / peso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <div class="highlight-label">💡 Criterio de selección</div>
+    <p>Priorizá productos livianos (menos de 1kg/unidad), sin batería o con batería simple, sin partes de tela que puedan manchar en aduana. Los sets requieren más logística pero multiplican el ticket.</p>
+  </div>
+
+  <div class="nav-row">
+    <div></div>
+    <button class="btn btn-primary" onclick="goTo(1)">Siguiente: cómo espiar ML →</button>
+  </div>
+</div>
+
+<!-- STEP 2: ESPIAR ML -->
+<div class="step-content" id="step-1">
+  <div class="step-header">
+    <div class="step-eyebrow">Paso 2 de 5</div>
+    <h2>Cómo espiar Mercado Libre</h2>
+    <p>Antes de comprar una sola unidad, ML te da toda la información que necesitás gratis. Así se usa.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🔍</div>
+      <h3>Búsqueda directa</h3>
+      <ul>
+        <li>Buscá el nombre del producto</li>
+        <li>Filtrá por "Más vendidos"</li>
+        <li>Anotá los primeros 5 resultados</li>
+        <li>Ignorá los "Patrocinados"</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>Herramienta Tendencias</h3>
+      <ul>
+        <li>Entrá a tendencias.mercadolibre.com.ar</li>
+        <li>Escribí tu producto</li>
+        <li>Fijate el volumen de búsquedas</li>
+        <li>Más de 1.000/mes = mercado activo</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏆</div>
+      <h3>Analizar al líder</h3>
+      <ul>
+        <li>Entrá al vendedor #1 del rubro</li>
+        <li>Fijate su reputación y antigüedad</li>
+        <li>Mirá cuántas unidades vendió</li>
+        <li>Leé sus preguntas y reseñas</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin: 8px 0 24px;">
+    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">URLs útiles para tu research:</p>
+
+    <div class="url-box">
+      <span class="url-label">Tendencias</span>
+      <span class="url-text">tendencias.mercadolibre.com.ar</span>
+    </div>
+    <div class="url-box">
+      <span class="url-label">Buscar mascotas</span>
+      <span class="url-text">mercadolibre.com.ar/mascotas → ordenar por "Más vendidos"</span>
+    </div>
+    <div class="url-box">
+      <span class="url-label">Modalibre (herramienta)</span>
+      <span class="url-text">modalibre.com → análisis de ventas de publicaciones</span>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Lo que buscás</th>
+        <th>Dónde lo ves</th>
+        <th>Señal positiva</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Volumen de ventas</td>
+        <td>Debajo del título en ML: "X vendidos"</td>
+        <td>+50 unidades en el producto líder</td>
+      </tr>
+      <tr>
+        <td>Precio de mercado</td>
+        <td>Rango de precios en los top 5</td>
+        <td>Rango amplio = hay lugar para vos</td>
+      </tr>
+      <tr>
+        <td>Cantidad de vendedores</td>
+        <td>Resultados de búsqueda</td>
+        <td>5–20 vendedores activos (ni 2 ni 200)</td>
+      </tr>
+      <tr>
+        <td>Calidad de fotos</td>
+        <td>Las publicaciones del líder</td>
+        <td>Fotos malas = oportunidad para vos</td>
+      </tr>
+      <tr>
+        <td>Preguntas sin responder</td>
+        <td>Sección de preguntas del producto</td>
+        <td>Muchas sin respuesta = mal vendedor</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Atrás</button>
+    <button class="btn btn-primary" onclick="goTo(2)">Siguiente: qué mirar →</button>
+  </div>
+</div>
+
+<!-- STEP 3: QUÉ MIRAR -->
+<div class="step-content" id="step-2">
+  <div class="step-header">
+    <div class="step-eyebrow">Paso 3 de 5</div>
+    <h2>Qué mirar en cada publicación</h2>
+    <p>Cuando encontrás un producto candidato, hay 6 cosas que tenés que revisar sí o sí antes de descartarlo o avanzar.</p>
+  </div>
+
+  <ul class="checklist" id="checklist-3">
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Unidades vendidas:</strong> Buscá el número debajo del título. Si el líder vendió menos de 20 en toda su historia, el mercado es chico. Si vendió +500, hay demanda real.</div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Precio promedio del mercado:</strong> Calculá el promedio de los top 5. Ese es tu "techo de mercado". Ahora calculá tu costo x5 (regla mol&mom). Si tu precio queda por debajo del promedio, hay margen.</div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Reputación del vendedor líder:</strong> ¿Es MercadoLíder? ¿Tiene 99%? ¿Cuánto tiempo lleva? Si el líder es débil, podés desplazarlo con mejor servicio.</div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Calidad de fotos y descripción:</strong> Si las fotos son malas o la descripción está incompleta, tenés ventaja competitiva inmediata sin cambiar el producto.</div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Variantes disponibles:</strong> ¿El líder vende solo 1 color/talle? Si importás con más variantes, capturás más del mercado con la misma publicación.</div>
+    </li>
+    <li onclick="toggleCheck(this)">
+      <div class="check-box">✓</div>
+      <div class="check-text"><strong>Estacionalidad:</strong> En Tendencias, fijate si las búsquedas son constantes o tienen pico en una época. Para el primer pedido, elegí producto de demanda pareja todo el año.</div>
+    </li>
+  </ul>
+
+  <div class="highlight">
+    <div class="highlight-label">🎯 La oportunidad ideal</div>
+    <p>Producto con +100 unidades vendidas por el líder, fotos y descripción mediocres, 5–15 vendedores activos, precio de mercado 2x o más sobre tu costo importado. Ese es el producto que querés.</p>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Atrás</button>
+    <button class="btn btn-primary" onclick="goTo(3)">Siguiente: puntuar →</button>
+  </div>
+</div>
+
+<!-- STEP 4: PUNTUAR -->
+<div class="step-content" id="step-3">
+  <div class="step-header">
+    <div class="step-eyebrow">Paso 4 de 5</div>
+    <h2>Scorecard de producto</h2>
+    <p>Punteá cada criterio del 1 al 5. El producto con mayor puntaje es el que vas a investigar primero en Alibaba.</p>
+  </div>
+
+  <div class="score-section">
+    <h3>📦 Producto A — <span id="prod-a-name" style="color:#888; font-weight:400; font-size:13px; cursor:pointer;" onclick="editProdName('a')">clic para nombrar</span></h3>
+
+    <div id="score-a">
+      <div class="score-row">
+        <div class="score-label">Unidades vendidas (líder)</div>
+        <div class="score-btns" data-cat="demanda-a">
+          <button class="score-btn" onclick="setScore(this, 'demanda-a')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-a')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-a')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-a')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-a')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Margen posible (precio / costo x5)</div>
+        <div class="score-btns" data-cat="margen-a">
+          <button class="score-btn" onclick="setScore(this, 'margen-a')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-a')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-a')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-a')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-a')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Competencia (pocos/débiles = 5)</div>
+        <div class="score-btns" data-cat="comp-a">
+          <button class="score-btn" onclick="setScore(this, 'comp-a')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-a')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-a')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-a')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-a')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Liviano y compacto para barco</div>
+        <div class="score-btns" data-cat="logistica-a">
+          <button class="score-btn" onclick="setScore(this, 'logistica-a')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-a')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-a')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-a')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-a')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Oportunidad de mejora (fotos/desc)</div>
+        <div class="score-btns" data-cat="mejora-a">
+          <button class="score-btn" onclick="setScore(this, 'mejora-a')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-a')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-a')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-a')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-a')">5</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-total">
+      <span class="score-total-label">Puntaje total Producto A</span>
+      <div style="display:flex; align-items:center;">
+        <span class="score-total-num" id="total-a">0</span>
+        <span style="color:#555; font-size:13px;">/25</span>
+        <span class="score-verdict" id="verdict-a"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-section" style="margin-top:16px;">
+    <h3>📦 Producto B — <span id="prod-b-name" style="color:#888; font-weight:400; font-size:13px; cursor:pointer;" onclick="editProdName('b')">clic para nombrar</span></h3>
+
+    <div>
+      <div class="score-row">
+        <div class="score-label">Unidades vendidas (líder)</div>
+        <div class="score-btns" data-cat="demanda-b">
+          <button class="score-btn" onclick="setScore(this, 'demanda-b')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-b')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-b')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-b')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'demanda-b')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Margen posible</div>
+        <div class="score-btns" data-cat="margen-b">
+          <button class="score-btn" onclick="setScore(this, 'margen-b')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-b')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-b')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-b')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'margen-b')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Competencia (pocos/débiles = 5)</div>
+        <div class="score-btns" data-cat="comp-b">
+          <button class="score-btn" onclick="setScore(this, 'comp-b')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-b')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-b')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-b')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'comp-b')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Liviano y compacto</div>
+        <div class="score-btns" data-cat="logistica-b">
+          <button class="score-btn" onclick="setScore(this, 'logistica-b')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-b')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-b')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-b')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'logistica-b')">5</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Oportunidad de mejora</div>
+        <div class="score-btns" data-cat="mejora-b">
+          <button class="score-btn" onclick="setScore(this, 'mejora-b')">1</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-b')">2</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-b')">3</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-b')">4</button>
+          <button class="score-btn" onclick="setScore(this, 'mejora-b')">5</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-total">
+      <span class="score-total-label">Puntaje total Producto B</span>
+      <div style="display:flex; align-items:center;">
+        <span class="score-total-num" id="total-b">0</span>
+        <span style="color:#555; font-size:13px;">/25</span>
+        <span class="score-verdict" id="verdict-b"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Atrás</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Ver decisión →</button>
+  </div>
+</div>
+
+<!-- STEP 5: DECISIÓN -->
+<div class="step-content" id="step-4">
+  <div class="step-header">
+    <div class="step-eyebrow">Paso 5 de 5</div>
+    <h2>Próximos pasos concretos</h2>
+    <p>Ya tenés el producto elegido. Esto es exactamente lo que hacés esta semana para avanzar sin perder tiempo.</p>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tarea</th>
+        <th>Dónde</th>
+        <th>Tiempo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--accent); font-family:'DM Mono', monospace;">01</td>
+        <td>Anotá los 3 mejores competidores en ML con precio y unidades vendidas</td>
+        <td>Mercado Libre</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent); font-family:'DM Mono', monospace;">02</td>
+        <td>Buscá el mismo producto en Alibaba, filtrá por "Trade Assurance" y mínimo 100 pedidos al proveedor</td>
+        <td>Alibaba.com</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent); font-family:'DM Mono', monospace;">03</td>
+        <td>Usá la calculadora de márgenes con el precio Alibaba encontrado</td>
+        <td>Calculadora mol&mom</td>
+        <td>10 min</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent); font-family:'DM Mono', monospace;">04</td>
+        <td>Si el margen da +25%, contactá 3 proveedores distintos en Alibaba pidiendo cotización por 200 unidades</td>
+        <td>Alibaba chat</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent); font-family:'DM Mono', monospace;">05</td>
+        <td>Cargá el producto como tarea en Jira con las cotizaciones recibidas</td>
+        <td>Jira</td>
+        <td>5 min</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card-grid" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-icon">🚫</div>
+      <h3>Señales de NO avanzar</h3>
+      <ul>
+        <li>El precio de ML está cerca de tu costo x5</li>
+        <li>El líder tiene 99% y miles de ventas</li>
+        <li>Producto tiene partes eléctricas complejas</li>
+        <li>Menos de 10 ventas totales en todo ML</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-icon">✅</div>
+      <h3>Señales de SÍ avanzar</h3>
+      <ul>
+        <li>Precio ML es 2x o más sobre tu costo</li>
+        <li>Fotos del líder son malas o básicas</li>
+        <li>Hay 5–15 vendedores, ninguno dominante</li>
+        <li>+100 unidades vendidas en el rubro</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:24px;">
+    <div class="highlight-label">🏁 Regla final mol&mom</div>
+    <p>No buscás el producto perfecto. Buscás el producto que podés vender <em>mejor que quien ya lo está vendiendo</em>. Mejores fotos, mejor descripción, mejor atención al cliente. Ese es tu diferencial en esta primera etapa.</p>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Atrás</button>
+    <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+let currentStep = 0;
+const scores = {};
+
+function goTo(n) {
+  document.querySelectorAll('.step-content').forEach((el, i) => {
+    el.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.step-tab').forEach((el, i) => {
+    el.classList.toggle('active', i === n);
+    if (i < n) el.classList.add('done'); else el.classList.remove('done');
+  });
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleProduct(el) {
+  const selected = document.querySelectorAll('.product-row.selected');
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+  } else if (selected.length < 3) {
+    el.classList.add('selected');
+  } else {
+    el.style.animation = 'shake 0.3s';
+    setTimeout(() => el.style.animation = '', 300);
+  }
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+}
+
+function setScore(btn, cat) {
+  const btns = btn.parentElement.querySelectorAll('.score-btn');
+  const val = parseInt(btn.textContent);
+  btns.forEach((b, i) => b.classList.toggle('selected', i < val));
+  scores[cat] = val;
+  updateTotals();
+}
+
+function updateTotals() {
+  const cats = ['demanda', 'margen', 'comp', 'logistica', 'mejora'];
+  for (const prod of ['a', 'b']) {
+    const total = cats.reduce((sum, c) => sum + (scores[`${c}-${prod}`] || 0), 0);
+    document.getElementById(`total-${prod}`).textContent = total;
+    const v = document.getElementById(`verdict-${prod}`);
+    if (total === 0) { v.textContent = ''; v.className = 'score-verdict'; }
+    else if (total >= 20) { v.textContent = '🔥 Avanzar'; v.className = 'score-verdict tag-green'; }
+    else if (total >= 13) { v.textContent = '🔍 Investigar'; v.className = 'score-verdict tag-yellow'; }
+    else { v.textContent = '❌ Descartar'; v.className = 'score-verdict tag-red'; }
+  }
+}
+
+function editProdName(prod) {
+  const name = prompt(`Nombre del Producto ${prod.toUpperCase()}:`);
+  if (name) document.getElementById(`prod-${prod}-name`).textContent = name;
+}
+</script>
+
+</body>
+</html>
