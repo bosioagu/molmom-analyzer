@@ -425,26 +425,14 @@ async function doSearch() {
   setProgress(30);
 
   try {
-    const headers = { 'Authorization': `Bearer ${mlToken}` };
-
-    // Intentar con categoría mascotas primero, sin categoría como fallback
+    // /sites/MLA/search es público: sin Authorization evitamos preflight CORS
     let res = await fetch(
-      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`,
-      { headers }
+      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`
     );
-
-    if (res.status === 401) {
-      // Token expirado
-      mlToken = null; sessionStorage.removeItem('ml_token');
-      initUI();
-      setErr('Tu sesión de ML expiró. Conectate nuevamente.');
-      return;
-    }
 
     if (!res.ok) {
       res = await fetch(
-        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`,
-        { headers }
+        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
