@@ -425,14 +425,15 @@ async function doSearch() {
   setProgress(30);
 
   try {
-    // /sites/MLA/search es público: sin Authorization evitamos preflight CORS
+    // app_id como query param en vez de Authorization header: evita preflight CORS
+    const aid = `&app_id=${encodeURIComponent(clientId)}`;
     let res = await fetch(
-      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`
+      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance${aid}`
     );
 
     if (!res.ok) {
       res = await fetch(
-        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`
+        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance${aid}`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
