@@ -318,11 +318,42 @@ const ML_BASE    = 'https://api.mercadolibre.com';
 const ML_SITE = 'MLA';
 
 // ─── AUTH ─────────────────────────────────
-let mlToken      = sessionStorage.getItem('ml_token')         || null;
-let clientId     = localStorage.getItem('ml_client_id')       || '';
-let clientSecret = localStorage.getItem('ml_client_secret')   || '';
+const REDIRECT_URI = 'https://bosioagu.github.io/molmom-analyzer/';
 
-initUI();
+let mlToken      = sessionStorage.getItem('ml_token')       || null;
+let clientId     = localStorage.getItem('ml_client_id')     || '';
+let clientSecret = localStorage.getItem('ml_client_secret') || '';
+
+// Manejar callback de ML con ?code=
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const code   = params.get('code');
+  if (code && clientId && clientSecret) {
+    history.replaceState(null, '', window.location.pathname);
+    await exchangeCode(code);
+  }
+  initUI();
+})();
+
+async function exchangeCode(code) {
+  setLoader(true, 'Autenticando con Mercado Libre...');
+  try {
+    const res = await fetch('https://api.mercadolibre.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+      body: `grant_type=authorization_code&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}&code=${encodeURIComponent(code)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+    mlToken = data.access_token;
+    sessionStorage.setItem('ml_token', mlToken);
+  } catch(e) {
+    const errEl = document.getElementById('setupErr');
+    if (errEl) { errEl.textContent = 'Error al autenticar: ' + e.message; errEl.classList.add('on'); }
+  } finally {
+    setLoader(false);
+  }
+}
 
 function initUI() {
   const hasToken = !!mlToken;
@@ -348,7 +379,7 @@ function updateAuthBadge() {
   }
 }
 
-async function saveAndConnect() {
+function saveAndConnect() {
   const id     = document.getElementById('clientIdInput').value.trim();
   const secret = document.getElementById('clientSecretInput').value.trim();
   const errEl  = document.getElementById('setupErr');
@@ -357,29 +388,7 @@ async function saveAndConnect() {
   localStorage.setItem('ml_client_id',     id);
   localStorage.setItem('ml_client_secret', secret);
   clientId = id; clientSecret = secret;
-  await fetchToken();
-}
-
-async function fetchToken() {
-  const errEl = document.getElementById('setupErr');
-  setLoader(true, 'Obteniendo token de Mercado Libre...');
-  try {
-    const res = await fetch('https://api.mercadolibre.com/oauth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
-    mlToken = data.access_token;
-    sessionStorage.setItem('ml_token', mlToken);
-    initUI();
-  } catch(e) {
-    errEl.textContent = 'Error obteniendo token: ' + e.message;
-    errEl.classList.add('on');
-  } finally {
-    setLoader(false);
-  }
+  window.location.href = `https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
 }
 
 function handleAuthClick() {
@@ -427,14 +436,23 @@ async function doSearch() {
   setProgress(30);
 
   try {
-    // El worker maneja el auth con sus propias credenciales — no enviamos headers custom.
+    // El worker reenvía el token del usuario a ML (Authorization Code flow).
+    const authHdr = { 'Authorization': `Bearer ${mlToken}` };
+
     let res = await fetch(
-      `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`
+      `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`,
+      { headers: authHdr }
     );
+
+    if (res.status === 401) {
+      mlToken = null; sessionStorage.removeItem('ml_token');
+      initUI(); setErr('Sesión expirada. Volvé a conectarte.'); return;
+    }
 
     if (!res.ok) {
       res = await fetch(
-        `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`
+        `${PROXY_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`,
+        { headers: authHdr }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     }
