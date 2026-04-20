@@ -10,62 +10,71 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f7f4ef;
-  --ink: #1a1612;
-  --accent: #e8410a;
-  --green: #2d6a4f;
-  --muted: #8a857e;
-  --border: #e2ddd6;
-  --yellow: #f5c842;
-  --card: #ffffff;
+  --bg: #f7f4ef; --ink: #1a1612; --accent: #e8410a;
+  --green: #2d6a4f; --muted: #8a857e; --border: #e2ddd6;
+  --yellow: #f5c842; --card: #ffffff;
 }
 
 body { background: var(--bg); color: var(--ink); font-family: 'Syne', sans-serif; min-height: 100vh; }
 
-/* HEADER */
 header {
   background: var(--ink); color: var(--bg);
-  padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 50;
+  padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50; gap: 12px; flex-wrap: wrap;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
-.badge {
-  width: 36px; height: 36px; background: var(--accent); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 800; color: white; letter-spacing: -1px; flex-shrink: 0;
-}
+.badge { width: 34px; height: 34px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: white; letter-spacing: -1px; flex-shrink: 0; }
 .brand-name { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .brand-sub { font-family: 'Lora', serif; font-style: italic; font-size: 11px; color: #777; }
-.header-tag {
-  font-family: 'Inconsolata', monospace; font-size: 10px;
-  background: #2a2a2a; padding: 4px 10px; border-radius: 4px; color: #aaa;
+
+.auth-area { display: flex; align-items: center; gap: 10px; }
+.auth-badge { font-family: 'Inconsolata', monospace; font-size: 11px; }
+.btn-auth {
+  padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  background: var(--accent); color: white; transition: all 0.15s; white-space: nowrap;
 }
+.btn-auth:hover { opacity: 0.85; }
+.btn-auth.connected { background: var(--green); }
+.btn-disconnect { background: transparent; border: 1px solid #444; color: #888; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; font-family: 'Syne', sans-serif; }
+.btn-disconnect:hover { color: white; border-color: #888; }
+
+/* SETUP SCREEN */
+.setup-screen {
+  max-width: 560px; margin: 60px auto; padding: 0 24px;
+  text-align: center; display: none;
+}
+.setup-screen.show { display: block; }
+.setup-ico { font-size: 56px; margin-bottom: 20px; }
+.setup-screen h2 { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+.setup-screen p { font-family: 'Lora', serif; font-style: italic; font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+.setup-steps { text-align: left; background: white; border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+.setup-step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+.setup-step:last-child { margin-bottom: 0; }
+.snum { width: 28px; height: 28px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: white; flex-shrink: 0; }
+.stext { font-size: 13px; line-height: 1.6; }
+.stext strong { display: block; margin-bottom: 2px; }
+.stext code { font-family: 'Inconsolata', monospace; background: #f0ede8; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+.appid-input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.appid-input-row input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Inconsolata', monospace; font-size: 14px; outline: none; }
+.appid-input-row input:focus { border-color: var(--accent); }
+.btn-big { padding: 13px 28px; background: var(--accent); color: white; border: none; border-radius: 9px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
+.btn-big:hover { background: #c73508; }
+.btn-big:disabled { background: #ddd; color: #bbb; cursor: not-allowed; }
 
 /* LAYOUT */
-.layout { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 68px); }
-.sidebar { background: var(--card); border-right: 1px solid var(--border); padding: 24px 20px; overflow-y: auto; }
-.panel { padding: 24px 28px; overflow-y: auto; }
+.layout { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 62px); }
+.sidebar { background: var(--card); border-right: 1px solid var(--border); padding: 22px 18px; overflow-y: auto; }
+.panel { padding: 22px 26px; overflow-y: auto; }
 
-/* FORM */
-.sec-title {
-  font-family: 'Inconsolata', monospace; font-size: 10px; text-transform: uppercase;
-  letter-spacing: 0.15em; color: var(--muted); margin-bottom: 12px;
-  display: flex; align-items: center; gap: 8px;
-}
+.sec-title { font-family: 'Inconsolata', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 .fsec { margin-bottom: 20px; }
 .fg { margin-bottom: 10px; }
 
-label {
-  display: block; font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.05em; color: #777; margin-bottom: 4px;
-}
-
-input {
-  width: 100%; padding: 8px 11px; border: 1.5px solid var(--border);
-  border-radius: 6px; background: var(--bg); font-family: 'Inconsolata', monospace;
-  font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.15s;
-}
+label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #777; margin-bottom: 4px; }
+input[type=text], input[type=number] { width: 100%; padding: 8px 11px; border: 1.5px solid var(--border); border-radius: 6px; background: var(--bg); font-family: 'Inconsolata', monospace; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.15s; }
 input:focus { border-color: var(--accent); background: white; }
 
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -73,30 +82,18 @@ input:focus { border-color: var(--accent); background: white; }
 .pfx i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); font-style: normal; pointer-events: none; }
 .pfx input { padding-left: 22px; }
 
-/* SEARCH */
 .srow { display: flex; gap: 6px; margin-bottom: 8px; }
 .srow input { flex: 1; }
 
-.btn {
-  padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer;
-  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-  transition: all 0.15s; white-space: nowrap;
-}
+.btn { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; transition: all 0.15s; white-space: nowrap; }
 .btn-dark { background: var(--ink); color: white; }
 .btn-dark:hover { background: #333; }
 .btn-dark:disabled { background: #ccc; cursor: not-allowed; }
 
-/* RESULTS */
 .rlist { display: flex; flex-direction: column; gap: 5px; max-height: 280px; overflow-y: auto; margin-bottom: 8px; }
-
-.ritem {
-  background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px;
-  padding: 9px 11px; cursor: pointer; display: flex; gap: 9px; align-items: flex-start;
-  transition: border-color 0.15s;
-}
+.ritem { background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 9px 11px; cursor: pointer; display: flex; gap: 9px; align-items: flex-start; transition: border-color 0.15s; }
 .ritem:hover { border-color: #bbb; }
 .ritem.on { border-color: var(--green); background: #ebf5f0; }
-
 .rthumb { width: 38px; height: 38px; border-radius: 5px; object-fit: cover; background: #eee; flex-shrink: 0; }
 .rinfo { flex: 1; min-width: 0; }
 .rtitle { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -104,39 +101,27 @@ input:focus { border-color: var(--accent); background: white; }
 .rprice { color: var(--green); font-weight: 600; margin-right: 6px; }
 .rcheck { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; margin-top: 1px; }
 .ritem.on .rcheck { background: var(--green); border-color: var(--green); color: white; }
-
 .selcount { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--green); margin-bottom: 8px; min-height: 16px; }
 
-/* MAIN BTN */
-.btn-main {
-  width: 100%; padding: 12px; background: var(--accent); color: white;
-  border: none; border-radius: 8px; font-family: 'Syne', sans-serif;
-  font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase;
-  letter-spacing: 0.05em; transition: all 0.2s;
-}
-.btn-main:hover:not(:disabled) { background: #c73508; transform: translateY(-1px); }
-.btn-main:disabled { background: #ddd; color: #bbb; cursor: not-allowed; transform: none; }
+.btn-main { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
+.btn-main:hover:not(:disabled) { background: #c73508; }
+.btn-main:disabled { background: #ddd; color: #bbb; cursor: not-allowed; }
 
-/* NOTICE / ERR */
-.notice { background: #fff8e6; border: 1px solid #f0d060; border-radius: 6px; padding: 9px 11px; font-size: 11px; line-height: 1.5; color: #7a5c00; margin-bottom: 10px; }
 .err { background: #fdf0eb; border: 1px solid #f5c6b0; border-radius: 6px; padding: 9px 11px; font-size: 11px; color: #8b3a20; margin-bottom: 8px; display: none; line-height: 1.5; }
 .err.on { display: block; }
 
-/* EMPTY */
 .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 380px; color: var(--muted); text-align: center; padding: 40px; }
 .empty-ico { font-size: 52px; margin-bottom: 14px; opacity: 0.2; }
 .empty p { font-family: 'Lora', serif; font-style: italic; font-size: 14px; line-height: 1.6; max-width: 260px; }
 
-/* VERDICT */
 .verdict { border-radius: 12px; padding: 22px 26px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 16px; }
-.verdict.go   { background: #ebf5f0; border: 2px solid var(--green); }
+.verdict.go { background: #ebf5f0; border: 2px solid var(--green); }
 .verdict.wait { background: #fffbeb; border: 2px solid var(--yellow); }
-.verdict.no   { background: #fdf0eb; border: 2px solid var(--accent); }
+.verdict.no { background: #fdf0eb; border: 2px solid var(--accent); }
 .vico { font-size: 40px; line-height: 1; flex-shrink: 0; }
 .vtitle { font-size: 19px; font-weight: 800; margin-bottom: 5px; }
 .vtext { font-family: 'Lora', serif; font-size: 13px; line-height: 1.7; color: #555; }
 
-/* METRICS */
 .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
 .met { background: white; border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; }
 .mlbl { font-family: 'Inconsolata', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 5px; }
@@ -144,7 +129,6 @@ input:focus { border-color: var(--accent); background: white; }
 .msub { font-size: 10px; color: var(--muted); font-family: 'Lora', serif; font-style: italic; }
 .g { color: var(--green); } .b { color: var(--accent); } .n { color: var(--ink); }
 
-/* CARD */
 .card { background: white; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; margin-bottom: 16px; }
 .chead { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .chead h3 { font-size: 13px; font-weight: 700; }
@@ -157,43 +141,30 @@ tr:last-child td { border-bottom: none; }
 tr:hover td { background: #fafafa; }
 
 .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-family: 'Inconsolata', monospace; font-size: 10px; font-weight: 600; }
-.tg { background: #d4edda; color: #1a5c34; }
-.ty { background: #fff3cd; color: #856404; }
-.tr { background: #f8d7da; color: #721c24; }
+.tg { background: #d4edda; color: #1a5c34; } .ty { background: #fff3cd; color: #856404; } .tr { background: #f8d7da; color: #721c24; }
 
-/* BREAKDOWN */
 .brow { display: flex; justify-content: space-between; padding: 8px 16px; border-bottom: 1px solid #f0ede8; font-size: 12px; }
 .brow:last-child { border-bottom: none; }
-.blbl { color: var(--muted); }
-.bval { font-family: 'Inconsolata', monospace; font-weight: 600; }
+.blbl { color: var(--muted); } .bval { font-family: 'Inconsolata', monospace; font-weight: 600; }
 .btot { background: var(--ink); color: white; padding: 11px 16px; display: flex; justify-content: space-between; align-items: center; }
-.btot .l { font-size: 12px; }
-.btot .v { font-family: 'Inconsolata', monospace; font-size: 17px; color: var(--yellow); }
+.btot .l { font-size: 12px; } .btot .v { font-family: 'Inconsolata', monospace; font-size: 17px; color: var(--yellow); }
 
-/* OPPS/RISKS */
 .or-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .orlist { list-style: none; padding: 4px 0 8px; }
 .orlist li { padding: 6px 16px; font-size: 12px; border-bottom: 1px solid #f0ede8; line-height: 1.4; }
 .orlist li:last-child { border-bottom: none; }
 
-/* NEXT STEP */
-.nextstep { background: var(--ink); color: white; border-radius: 9px; padding: 16px 20px; margin-bottom: 16px; }
-.nslbl { font-family: 'Inconsolata', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #777; margin-bottom: 7px; }
-.nstext { font-size: 13px; line-height: 1.6; }
-
 .footnote { font-family: 'Lora', serif; font-style: italic; font-size: 11px; color: var(--muted); padding: 4px 0 40px; line-height: 1.6; }
 
-/* LOADER */
 .loader { display: none; position: fixed; inset: 0; background: rgba(247,244,239,0.93); z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
 .loader.on { display: flex; }
 .spin { width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: sp 0.7s linear infinite; }
 @keyframes sp { to { transform: rotate(360deg); } }
 .lmsg { font-family: 'Inconsolata', monospace; font-size: 12px; color: var(--muted); }
 
-/* PROGRESS */
 .progress { height: 2px; background: var(--border); margin-bottom: 12px; border-radius: 1px; overflow: hidden; display: none; }
 .progress.on { display: block; }
-.pbar { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; border-radius: 1px; }
+.pbar { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; }
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -202,8 +173,6 @@ tr:hover td { background: #fafafa; }
   .layout { grid-template-columns: 1fr; }
   .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
   .or-grid { grid-template-columns: 1fr; }
-  header { padding: 14px 18px; }
-  .panel { padding: 18px; }
 }
 </style>
 </head>
@@ -222,22 +191,64 @@ tr:hover td { background: #fafafa; }
       <div class="brand-sub">Analizador de producto</div>
     </div>
   </div>
-  <div class="header-tag">API Mercado Libre · AR</div>
+  <div class="auth-area">
+    <span class="auth-badge" id="mlAuthBadge">● no conectado</span>
+    <button class="btn-auth" id="mlAuthBtn" onclick="handleAuthClick()">Conectar con ML</button>
+    <button class="btn-disconnect" id="btnDisconnect" style="display:none" onclick="disconnectML()">desconectar</button>
+  </div>
 </header>
 
-<div class="layout">
+<!-- SETUP SCREEN (cuando no hay token) -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-ico">🔐</div>
+  <h2>Conectá tu cuenta de ML</h2>
+  <p>La API de Mercado Libre requiere autenticación. Ingresá tu App ID y conectate con un click.</p>
 
-  <!-- SIDEBAR -->
+  <div class="setup-steps">
+    <div class="setup-step">
+      <div class="snum">1</div>
+      <div class="stext">
+        <strong>Pegá tu App ID de ML Developers</strong>
+        Es el número que aparece en <code>developers.mercadolibre.com.ar</code> al entrar a tu aplicación.
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="snum">2</div>
+      <div class="stext">
+        <strong>Hacé clic en "Guardar y conectar"</strong>
+        Te redirige a ML para autorizar. Iniciás sesión con tu cuenta normal de ML.
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="snum">3</div>
+      <div class="stext">
+        <strong>Volvés automáticamente a la app</strong>
+        Ya podés buscar productos reales. El token dura 6 horas.
+      </div>
+    </div>
+  </div>
+
+  <div class="appid-input-row">
+    <input type="text" id="appIdInput" placeholder="Ej: 1234567890" />
+    <button class="btn-big" onclick="saveAndConnect()">Guardar y conectar →</button>
+  </div>
+
+  <p style="font-size:11px;color:var(--muted);font-family:'Lora',serif;font-style:italic;">
+    El App ID se guarda en tu navegador. No se comparte con nadie.
+  </p>
+</div>
+
+<!-- MAIN APP (cuando hay token) -->
+<div class="layout" id="appLayout" style="display:none;">
+
   <div class="sidebar">
 
     <div class="fsec">
       <div class="sec-title">① Costos de importación</div>
-
       <div class="fg">
         <label>Nombre del producto</label>
         <input type="text" id="pname" placeholder="Ej: Arnés ajustable para perro" />
       </div>
-
       <div class="g2">
         <div class="fg">
           <label>Precio Alibaba (U$S)</label>
@@ -248,7 +259,6 @@ tr:hover td { background: #fafafa; }
           <input type="number" id="qty" placeholder="200" min="1" />
         </div>
       </div>
-
       <div class="g2">
         <div class="fg">
           <label>Flete + Aduana (U$S total)</label>
@@ -259,7 +269,6 @@ tr:hover td { background: #fafafa; }
           <input type="number" id="tc" placeholder="1400" min="1" />
         </div>
       </div>
-
       <div class="g2">
         <div class="fg">
           <label>Comisión ML (%)</label>
@@ -274,20 +283,12 @@ tr:hover td { background: #fafafa; }
 
     <div class="fsec">
       <div class="sec-title">② Competidores en ML</div>
-
-      <div class="notice">
-        🔴 Para que la búsqueda funcione esta app tiene que estar hosteada en GitHub Pages (no como archivo local). Ver guía abajo.
-      </div>
-
       <div class="err" id="errBox"></div>
-
       <div class="progress" id="prog"><div class="pbar" id="pbar"></div></div>
-
       <div class="srow">
         <input type="text" id="sq" placeholder="Ej: arnés perro" />
         <button class="btn btn-dark" id="sbtn" onclick="doSearch()">Buscar</button>
       </div>
-
       <div class="rlist" id="rlist"></div>
       <div class="selcount" id="sc"></div>
     </div>
@@ -298,7 +299,6 @@ tr:hover td { background: #fafafa; }
 
   </div>
 
-  <!-- PANEL -->
   <div class="panel" id="panel">
     <div class="empty">
       <div class="empty-ico">📊</div>
@@ -309,21 +309,83 @@ tr:hover td { background: #fafafa; }
 </div>
 
 <script>
-// ─────────────────────────────────────────
-// CONFIG
-// ─────────────────────────────────────────
+// ─── CONFIG ───────────────────────────────
 const ML_BASE = 'https://api.mercadolibre.com';
 const ML_SITE = 'MLA';
 
+// ─── AUTH ─────────────────────────────────
+let mlToken = sessionStorage.getItem('ml_token') || null;
+let appId   = localStorage.getItem('ml_app_id')  || '';
+
+// Leer token del hash/params al volver de ML
+(function checkCallback() {
+  const hash   = new URLSearchParams(window.location.hash.replace('#',''));
+  const search = new URLSearchParams(window.location.search);
+  const token  = hash.get('access_token') || search.get('access_token');
+  if (token) {
+    mlToken = token;
+    sessionStorage.setItem('ml_token', token);
+    history.replaceState(null, '', window.location.pathname);
+  }
+  initUI();
+})();
+
+function initUI() {
+  const hasToken = !!mlToken;
+  document.getElementById('setupScreen').classList.toggle('show', !hasToken);
+  document.getElementById('appLayout').style.display = hasToken ? 'grid' : 'none';
+  updateAuthBadge();
+  if (appId) document.getElementById('appIdInput').value = appId;
+}
+
+function updateAuthBadge() {
+  const badge = document.getElementById('mlAuthBadge');
+  const btn   = document.getElementById('mlAuthBtn');
+  const disc  = document.getElementById('btnDisconnect');
+  if (mlToken) {
+    badge.textContent = '● conectado'; badge.style.color = '#2d6a4f';
+    btn.textContent = '✓ Conectado'; btn.className = 'btn-auth connected';
+    disc.style.display = 'block';
+  } else {
+    badge.textContent = '● no conectado'; badge.style.color = '#e8410a';
+    btn.textContent = 'Conectar con ML'; btn.className = 'btn-auth';
+    disc.style.display = 'none';
+  }
+}
+
+function saveAndConnect() {
+  const id = document.getElementById('appIdInput').value.trim();
+  if (!id) { alert('Ingresá tu App ID primero.'); return; }
+  localStorage.setItem('ml_app_id', id);
+  appId = id;
+  redirectToML();
+}
+
+function handleAuthClick() {
+  if (mlToken) return; // ya conectado
+  if (appId) { redirectToML(); return; }
+  // scroll a setup
+  document.getElementById('setupScreen').scrollIntoView({ behavior: 'smooth' });
+}
+
+function redirectToML() {
+  const redirect = encodeURIComponent(window.location.href.split('?')[0].split('#')[0]);
+  window.location.href = `https://auth.mercadolibre.com.ar/authorization?response_type=token&client_id=${appId}&redirect_uri=${redirect}`;
+}
+
+function disconnectML() {
+  mlToken = null;
+  sessionStorage.removeItem('ml_token');
+  initUI();
+}
+
+// ─── INPUTS ───────────────────────────────
 let selected = [];
 
-// ─────────────────────────────────────────
-// ENABLE BTN ON INPUT
-// ─────────────────────────────────────────
 ['ali','qty','flete','tc'].forEach(id =>
-  document.getElementById(id).addEventListener('input', updateBtn)
+  document.getElementById(id)?.addEventListener('input', updateBtn)
 );
-document.getElementById('sq').addEventListener('keydown', e => {
+document.getElementById('sq')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
 
@@ -336,12 +398,11 @@ function updateBtn() {
     : 'Analizar producto →';
 }
 
-// ─────────────────────────────────────────
-// SEARCH — Mercado Libre API real
-// ─────────────────────────────────────────
+// ─── SEARCH ───────────────────────────────
 async function doSearch() {
   const q = document.getElementById('sq').value.trim();
   if (!q) return;
+  if (!mlToken) { setErr('Conectate con ML primero (botón arriba a la derecha).'); return; }
 
   const sbtn = document.getElementById('sbtn');
   sbtn.disabled = true; sbtn.textContent = '...';
@@ -349,35 +410,41 @@ async function doSearch() {
   document.getElementById('rlist').innerHTML = '';
   selected = []; updateSelUI(); updateBtn();
   setLoader(true, 'Buscando en Mercado Libre Argentina...');
-  setProgress(20);
+  setProgress(30);
 
   try {
-    // ML public search — no token required, works from any origin when hosted (not file://)
-    const url = `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`;
-    const res = await fetch(url);
+    const headers = { 'Authorization': `Bearer ${mlToken}` };
 
-    if (!res.ok) {
-      // Try without category filter as fallback
-      const res2 = await fetch(`${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`);
-      if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-      const d2 = await res2.json();
-      setProgress(80);
-      renderList(d2.results || []);
-    } else {
-      const d = await res.json();
-      setProgress(80);
-      renderList(d.results || []);
+    // Intentar con categoría mascotas primero, sin categoría como fallback
+    let res = await fetch(
+      `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&category=MLA1647&limit=15&sort=relevance`,
+      { headers }
+    );
+
+    if (res.status === 401) {
+      // Token expirado
+      mlToken = null; sessionStorage.removeItem('ml_token');
+      initUI();
+      setErr('Tu sesión de ML expiró. Conectate nuevamente.');
+      return;
     }
 
+    if (!res.ok) {
+      res = await fetch(
+        `${ML_BASE}/sites/${ML_SITE}/search?q=${encodeURIComponent(q)}&limit=15&sort=relevance`,
+        { headers }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    }
+
+    setProgress(70);
+    const data = await res.json();
+    renderList(data.results || []);
     setProgress(100);
-    setTimeout(() => setProgress(0), 500);
+    setTimeout(() => setProgress(0), 400);
 
   } catch(e) {
-    setErr(`No se pudo conectar con Mercado Libre. ${
-      location.protocol === 'file:'
-        ? 'Esta app debe estar hosteada (GitHub Pages) para que la API funcione. Ver guía abajo.'
-        : 'Verificá tu conexión e intentá de nuevo.'
-    }`);
+    setErr('Error al buscar en ML: ' + e.message);
   } finally {
     sbtn.disabled = false; sbtn.textContent = 'Buscar';
     setLoader(false);
@@ -390,15 +457,11 @@ function renderList(items) {
     c.innerHTML = '<p style="font-size:11px;color:#999;padding:10px;text-align:center;">Sin resultados. Probá otra búsqueda.</p>';
     return;
   }
-
   c.innerHTML = '';
   items.forEach(item => {
+    const rep = item.seller?.seller_reputation?.level_id || 'unknown';
     const el = document.createElement('div');
     el.className = 'ritem';
-
-    // Seller reputation
-    const rep = item.seller?.seller_reputation?.level_id || 'unknown';
-
     el.innerHTML = `
       <img class="rthumb" src="${item.thumbnail||''}" alt=""
         onerror="this.style.background='#eee';this.removeAttribute('src');" />
@@ -409,25 +472,17 @@ function renderList(items) {
           <span>${item.sold_quantity > 0 ? item.sold_quantity + ' vendidos' : 'sin ventas'} · ${repLabel(rep)}</span>
         </div>
       </div>
-      <div class="rcheck"></div>
-    `;
-
+      <div class="rcheck"></div>`;
     el.addEventListener('click', () => toggleItem(el, {
-      id: item.id,
-      title: item.title,
-      price: item.price || 0,
-      sold: item.sold_quantity || 0,
-      rep,
-      url: item.permalink || ''
+      id: item.id, title: item.title, price: item.price||0,
+      sold: item.sold_quantity||0, rep, url: item.permalink||''
     }));
-
     c.appendChild(el);
   });
 }
 
 function repLabel(r) {
-  const map = { platinum: 'Platinum', gold_pro: 'Gold Pro', gold: 'Gold', silver: 'Silver', new: 'Nuevo' };
-  return map[r] || 'Sin datos';
+  return { platinum:'Platinum', gold_pro:'Gold Pro', gold:'Gold', silver:'Silver', new:'Nuevo' }[r] || 'Sin datos';
 }
 
 function toggleItem(el, item) {
@@ -447,13 +502,11 @@ function toggleItem(el, item) {
 function updateSelUI() {
   const el = document.getElementById('sc');
   el.textContent = selected.length
-    ? `${selected.length} competidor${selected.length > 1 ? 'es' : ''} seleccionado${selected.length > 1 ? 's' : ''}`
+    ? `${selected.length} competidor${selected.length>1?'es':''} seleccionado${selected.length>1?'s':''}`
     : '';
 }
 
-// ─────────────────────────────────────────
-// ANALYZE
-// ─────────────────────────────────────────
+// ─── ANALYZE ──────────────────────────────
 function doAnalyze() {
   const ali   = parseFloat(document.getElementById('ali').value)   || 0;
   const qty   = parseInt(document.getElementById('qty').value)     || 1;
@@ -463,202 +516,113 @@ function doAnalyze() {
   const marg  = parseFloat(document.getElementById('marg').value)  / 100 || 0.30;
   const name  = document.getElementById('pname').value.trim() || 'Producto';
 
-  // ── COST CALCS ──
-  const fobUnit   = ali * 1.05;                        // + flete interno China
-  const fleteUnit = flete / qty;                       // flete+aduana prorrateado
-  const costUSD   = fobUnit + fleteUnit;               // costo total en Córdoba
+  const fobUnit   = ali * 1.05;
+  const fleteUnit = flete / qty;
+  const costUSD   = fobUnit + fleteUnit;
   const costARS   = costUSD * tc;
-  const extras    = costUSD * 0.05;                    // embalaje + devoluciones
-  const netFactor = 1 - comm - 0.03 - 0.04;           // neto tras ML (comis+publi+envío)
-  const breakEven = (costUSD + extras) / netFactor;   // precio break-even
-  const targetP   = costUSD / (netFactor * (1 - marg)); // precio para el margen deseado
+  const netFactor = 1 - comm - 0.03 - 0.04;
+  const breakEven = (costUSD * 1.05) / netFactor;
+  const targetP   = costUSD / (netFactor * (1 - marg));
   const targetARS = targetP * tc;
   const breakARS  = breakEven * tc;
 
-  // ── MARKET CALCS ──
   const hasComps  = selected.length > 0;
   const prices    = hasComps ? selected.map(s => s.price) : [];
   const avgMkt    = hasComps ? prices.reduce((a,b)=>a+b,0)/prices.length : null;
-  const minMkt    = hasComps ? Math.min(...prices) : null;
-  const maxMkt    = hasComps ? Math.max(...prices) : null;
   const totalSold = selected.reduce((a,s)=>a+(s.sold||0),0);
-  const strong    = selected.filter(s=>s.rep==='platinum'||s.rep==='gold_pro'||s.rep==='gold').length;
+  const strong    = selected.filter(s=>['platinum','gold_pro','gold'].includes(s.rep)).length;
 
   let mktPct = null, gapPct = null;
   if (hasComps) {
-    const mktUSD = avgMkt / tc;
-    const profit = mktUSD * netFactor - costUSD;
-    mktPct = Math.round((profit / (mktUSD * netFactor)) * 100);
-    gapPct = Math.round(((avgMkt / targetARS) - 1) * 100);
+    const profit = (avgMkt/tc)*netFactor - costUSD;
+    mktPct = Math.round((profit / ((avgMkt/tc)*netFactor)) * 100);
+    gapPct = Math.round(((avgMkt/targetARS)-1)*100);
   }
 
-  // ── VERDICT LOGIC ──
+  // VERDICT
   let verdict, vClass, vIcon, vTitle, vText;
-
   if (!hasComps) {
-    // Solo con costos, sin competidores
-    const multipleX = targetP / ali;
-    if (multipleX < 4) {
-      verdict = 'no'; vClass = 'no'; vIcon = '⚠️';
-      vTitle = 'Margen muy ajustado';
-      vText = `Con estos costos tu precio objetivo es U$S ${targetP.toFixed(1)}, solo ${multipleX.toFixed(1)}x el precio Alibaba. La regla mol&mom indica que necesitás al menos 5x para cubrir logística, ML y ganancia. Revisá los costos o buscá un producto más barato en Alibaba.`;
-    } else if (multipleX < 5.5) {
-      verdict = 'wait'; vClass = 'wait'; vIcon = '🤔';
-      vTitle = 'Números justos, validar mercado';
-      vText = `Tu precio objetivo es U$S ${targetP.toFixed(1)} (${multipleX.toFixed(1)}x Alibaba). Está en el límite. Buscá competidores en ML para confirmar que el mercado soporta ese precio antes de hacer el pedido.`;
-    } else {
-      verdict = 'go'; vClass = 'go'; vIcon = '🚀';
-      vTitle = 'Costos saludables';
-      vText = `Con un precio objetivo de U$S ${targetP.toFixed(1)} (${multipleX.toFixed(1)}x Alibaba), los costos dejan margen cómodo. Buscá competidores en ML para confirmar que el mercado paga ese precio.`;
-    }
+    const mx = targetP / ali;
+    if (mx < 4)        { verdict='no';   vClass='no';   vIcon='⚠️'; vTitle='Margen muy ajustado'; vText=`Tu precio objetivo U$S ${targetP.toFixed(1)} es solo ${mx.toFixed(1)}x el precio Alibaba. Necesitás al menos 5x. Revisá los costos o buscá un producto más económico.`; }
+    else if (mx < 5.5) { verdict='wait'; vClass='wait'; vIcon='🤔'; vTitle='Números justos, validar mercado'; vText=`Precio objetivo U$S ${targetP.toFixed(1)} (${mx.toFixed(1)}x Alibaba). Está en el límite. Buscá competidores para confirmar que el mercado paga ese precio.`; }
+    else               { verdict='go';   vClass='go';   vIcon='🚀'; vTitle='Costos saludables'; vText=`Precio objetivo U$S ${targetP.toFixed(1)} (${mx.toFixed(1)}x Alibaba). Los números dejan margen cómodo. Buscá competidores para confirmar el precio de mercado.`; }
   } else {
-    // Con competidores
-    const priceOk   = avgMkt > targetARS;
-    const demandOk  = totalSold > 30;
-    const compWeak  = strong / selected.length < 0.5;
-    const marginOk  = mktPct > 15;
-    const score     = [priceOk, demandOk, compWeak, marginOk].filter(Boolean).length;
-
-    if (score >= 3) {
-      verdict = 'go'; vClass = 'go'; vIcon = '🚀';
-      vTitle = 'Conviene importar';
-      vText = `El mercado promedia $${Math.round(avgMkt).toLocaleString('es-AR')} y tu precio objetivo es $${Math.round(targetARS).toLocaleString('es-AR')} — hay ${gapPct}% de espacio. Margen al precio de mercado: ${mktPct}%. Con ${totalSold} unidades vendidas entre los competidores hay demanda real.`;
-    } else if (score === 2) {
-      verdict = 'wait'; vClass = 'wait'; vIcon = '🤔';
-      vTitle = 'Investigar antes de avanzar';
-      vText = `Señales mixtas. ${priceOk ? '✓ El precio de mercado da margen.' : '✗ El precio de mercado está cerca de tu break-even.'} ${demandOk ? '✓ Hay demanda.' : '✗ Pocas unidades vendidas.'} ${compWeak ? '✓ Competencia débil.' : '✗ Hay competidores fuertes.'} Revisá los detalles antes de confirmar.`;
-    } else {
-      verdict = 'no'; vClass = 'no'; vIcon = '⚠️';
-      vTitle = 'No conviene por ahora';
-      vText = `${!priceOk ? `El precio de mercado ($${Math.round(avgMkt).toLocaleString('es-AR')}) está por debajo de tu precio objetivo ($${Math.round(targetARS).toLocaleString('es-AR')}). ` : ''}${!demandOk ? 'Poca demanda real en ML. ' : ''}${!compWeak ? `${strong} de ${selected.length} competidores son Platinum/Gold — difícil desplazarlos. ` : ''}Considerá otro producto o reducí costos.`;
-    }
+    const priceOk  = avgMkt > targetARS;
+    const demandOk = totalSold > 30;
+    const compWeak = strong/selected.length < 0.5;
+    const marginOk = mktPct > 15;
+    const score    = [priceOk,demandOk,compWeak,marginOk].filter(Boolean).length;
+    if (score >= 3)    { verdict='go';   vClass='go';   vIcon='🚀'; vTitle='Conviene importar'; vText=`Mercado promedia $${Math.round(avgMkt).toLocaleString('es-AR')} vs tu objetivo $${Math.round(targetARS).toLocaleString('es-AR')} (+${gapPct}%). Margen al precio de mercado: ${mktPct}%. Demanda real: ${totalSold} unidades entre ${selected.length} vendedores.`; }
+    else if (score===2){ verdict='wait'; vClass='wait'; vIcon='🤔'; vTitle='Investigar antes de avanzar'; vText=`Señales mixtas. ${priceOk?'✓ Precio de mercado da margen.':'✗ Precio de mercado cerca del break-even.'} ${demandOk?'✓ Demanda OK.':'✗ Pocas ventas.'} ${compWeak?'✓ Competencia débil.':'✗ Hay competidores fuertes.'}`; }
+    else               { verdict='no';  vClass='no';   vIcon='⚠️'; vTitle='No conviene por ahora'; vText=`${!priceOk?`El precio de mercado ($${Math.round(avgMkt).toLocaleString('es-AR')}) está por debajo de tu objetivo ($${Math.round(targetARS).toLocaleString('es-AR')}). `:''}${!demandOk?'Poca demanda real. ':''}${!compWeak?`${strong}/${selected.length} competidores son fuertes. `:''}Considerá otro producto o reducí costos.`; }
   }
 
-  renderAnalysis({
-    name, ali, qty, flete, tc, comm, marg, netFactor,
-    costUSD, costARS, fleteUnit, breakEven, breakARS, targetP, targetARS,
-    avgMkt, minMkt, maxMkt, totalSold, strong, mktPct, gapPct, hasComps,
-    verdict, vClass, vIcon, vTitle, vText
-  });
+  renderAnalysis({ name, ali, qty, flete, tc, comm, marg, netFactor, costUSD, costARS, fleteUnit, breakEven, breakARS, targetP, targetARS, avgMkt, totalSold, strong, mktPct, gapPct, hasComps, verdict, vClass, vIcon, vTitle, vText });
 }
 
-// ─────────────────────────────────────────
-// RENDER RESULTS
-// ─────────────────────────────────────────
 function renderAnalysis(d) {
-  const mCls = d.mktPct > 25 ? 'g' : d.mktPct > 10 ? 'n' : 'b';
-  const dCls = d.totalSold > 100 ? 'g' : d.totalSold > 20 ? 'n' : 'b';
-  const gCls = d.gapPct >= 20 ? 'g' : d.gapPct >= 0 ? 'n' : 'b';
-
   function repTag(r) {
     if (r==='platinum')              return `<span class="tag tr">Platinum</span>`;
-    if (r==='gold_pro'||r==='gold')  return `<span class="tag ty">Gold</span>`;
+    if (['gold_pro','gold'].includes(r)) return `<span class="tag ty">Gold</span>`;
     if (r==='silver')                return `<span class="tag tg">Silver</span>`;
     return `<span class="tag" style="background:#eee;color:#888">Nuevo</span>`;
   }
 
-  const rows = selected.map(s => `
+  const rows = selected.map(s=>`
     <tr>
       <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;">
-        ${s.url ? `<a href="${s.url}" target="_blank" style="color:inherit;text-decoration:none;" title="Ver en ML">🔗 </a>` : ''}${s.title}
+        ${s.url?`<a href="${s.url}" target="_blank" style="color:inherit;text-decoration:none;">🔗 </a>`:''}${s.title}
       </td>
       <td><strong>$${s.price.toLocaleString('es-AR')}</strong></td>
       <td style="font-family:'Inconsolata',monospace;">U$S ${(s.price/d.tc).toFixed(1)}</td>
-      <td>${s.sold > 0 ? s.sold.toLocaleString() : '—'}</td>
+      <td>${s.sold>0?s.sold.toLocaleString():'—'}</td>
       <td>${repTag(s.rep)}</td>
-      <td>${s.price >= d.targetARS
-        ? `<span class="tag tg">↑ OK</span>`
-        : `<span class="tag tr">↓ Bajo</span>`}</td>
+      <td>${s.price>=d.targetARS?`<span class="tag tg">↑ OK</span>`:`<span class="tag tr">↓ Bajo</span>`}</td>
     </tr>`).join('');
 
   const mktMetrics = d.hasComps ? `
     <div class="met">
       <div class="mlbl">Precio prom. mercado</div>
       <div class="mval ${d.gapPct>=0?'g':'b'}">$${Math.round(d.avgMkt).toLocaleString('es-AR')}</div>
-      <div class="msub">${d.gapPct>=0?'+':''}${d.gapPct}% vs tu objetivo</div>
+      <div class="msub">${d.gapPct>=0?'+':''}${d.gapPct}% vs objetivo</div>
     </div>
     <div class="met">
       <div class="mlbl">Margen al precio mkt</div>
-      <div class="mval ${mCls}">${d.mktPct}%</div>
+      <div class="mval ${d.mktPct>25?'g':d.mktPct>10?'n':'b'}">${d.mktPct}%</div>
       <div class="msub">${d.mktPct>25?'Saludable':d.mktPct>10?'Ajustado':'Muy bajo'}</div>
     </div>
     <div class="met">
       <div class="mlbl">Unidades vendidas</div>
-      <div class="mval ${dCls}">${d.totalSold.toLocaleString()}</div>
+      <div class="mval ${d.totalSold>100?'g':d.totalSold>20?'n':'b'}">${d.totalSold.toLocaleString()}</div>
       <div class="msub">entre ${selected.length} vendedores</div>
     </div>` : '';
 
   const compTable = d.hasComps ? `
     <div class="card">
-      <div class="chead">
-        <h3>📋 Competidores analizados</h3>
-        <span class="ctag">${selected.length} publicaciones · datos reales ML</span>
-      </div>
+      <div class="chead"><h3>📋 Competidores · datos reales ML</h3><span class="ctag">${selected.length} publicaciones</span></div>
       <table>
         <thead><tr><th>Producto</th><th>Precio ARS</th><th>U$S</th><th>Vendidos</th><th>Rep.</th><th>vs Objetivo</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-    </div>` : `
-    <div class="card" style="padding:16px 18px;">
-      <p style="font-size:12px;color:var(--muted);font-family:'Lora',serif;font-style:italic;">
-        💡 No seleccionaste competidores. Buscá productos similares en ML y seleccioná los más relevantes para un análisis más preciso.
-      </p>
-    </div>`;
+    </div>` : `<div class="card" style="padding:14px 16px;"><p style="font-size:12px;color:var(--muted);font-family:'Lora',serif;font-style:italic;">💡 Buscá competidores en ML para un análisis más preciso.</p></div>`;
 
-  // Smart recommendations based on verdict
-  const recommendations = {
-    go: [
-      `Contactar 3 proveedores en Alibaba para "${d.name}" y pedir cotización por ${d.qty} unidades`,
-      `Calcular el MOQ (mínimo de pedido) y verificar que entre en U$S ${(d.ali * d.qty).toFixed(0)} de mercadería`,
-      d.hasComps ? `Analizar las fotos y descripciones de los ${selected.length} competidores para mejorarlas` : 'Hacer research de competidores en ML para afinar el precio'
-    ],
-    wait: [
-      'Buscar más competidores en ML para tener una muestra más representativa',
-      'Pedir cotizaciones a 3 proveedores antes de decidir',
-      d.hasComps && d.mktPct < 15 ? 'Negociar precio Alibaba — target: reducir costo en 15-20%' : 'Validar demanda con la herramienta Tendencias de ML'
-    ],
-    no: [
-      'Evaluar otro producto del rubro mascotas con mejor margen',
-      d.hasComps && d.avgMkt < d.targetARS ? 'O reducir el costo logístico — consultá a tu freight forwarder por mejores tarifas' : 'Buscar proveedor más económico en Alibaba (mínimo 3 cotizaciones)',
-      'Usar la calculadora mol&mom para encontrar el precio Alibaba máximo viable'
-    ]
+  const recs = {
+    go:   [`Contactar 3 proveedores en Alibaba para "${d.name}" y pedir cotización por ${d.qty} unidades`, d.hasComps?`Analizar fotos/descripciones de los ${selected.length} competidores — mejorarlas es tu ventaja`:'Hacer research de competidores en ML para afinar precio', 'Solicitar muestra antes del pedido grande'],
+    wait: ['Buscar más competidores en ML para ampliar la muestra', 'Pedir 3 cotizaciones en Alibaba antes de decidir', d.hasComps&&d.mktPct<15?'Negociar precio Alibaba — target: reducir costo 15-20%':'Verificar demanda en tendencias.mercadolibre.com.ar'],
+    no:   ['Evaluar otro producto del rubro con mejor margen', d.hasComps&&d.avgMkt<d.targetARS?'Reducir costo logístico — consultá tarifas con tu freight forwarder':'Buscar proveedor más económico en Alibaba (mínimo 3 cotizaciones)', 'Usar la regla x5: precio Alibaba máximo = precio ML esperado / 5']
   };
 
-  const recItems = (recommendations[d.verdict] || []).map(r =>
-    `<li style="padding:6px 0;font-size:12px;border-bottom:1px solid #f0ede8;line-height:1.4;">→ ${r}</li>`
-  ).join('');
-
   document.getElementById('panel').innerHTML = `
-
     <div class="verdict ${d.vClass}">
       <div class="vico">${d.vIcon}</div>
-      <div>
-        <div class="vtitle">${d.vTitle}</div>
-        <div class="vtext">${d.vText}</div>
-      </div>
+      <div><div class="vtitle">${d.vTitle}</div><div class="vtext">${d.vText}</div></div>
     </div>
 
     <div class="metrics">
-      <div class="met">
-        <div class="mlbl">Costo en Córdoba</div>
-        <div class="mval n">U$S ${d.costUSD.toFixed(2)}</div>
-        <div class="msub">$${Math.round(d.costARS).toLocaleString('es-AR')}/unidad</div>
-      </div>
-      <div class="met">
-        <div class="mlbl">Break-even ML</div>
-        <div class="mval b">$${Math.round(d.breakARS).toLocaleString('es-AR')}</div>
-        <div class="msub">U$S ${d.breakEven.toFixed(1)} — sin ganar nada</div>
-      </div>
-      <div class="met">
-        <div class="mlbl">Tu precio objetivo</div>
-        <div class="mval g">$${Math.round(d.targetARS).toLocaleString('es-AR')}</div>
-        <div class="msub">con ${Math.round(d.marg*100)}% margen neto</div>
-      </div>
-      <div class="met">
-        <div class="mlbl">Ganancia / unidad</div>
-        <div class="mval g">U$S ${(d.targetP * d.netFactor * d.marg).toFixed(2)}</div>
-        <div class="msub">$${Math.round(d.targetP * d.netFactor * d.marg * d.tc).toLocaleString('es-AR')} al precio obj.</div>
-      </div>
+      <div class="met"><div class="mlbl">Costo en Córdoba</div><div class="mval n">U$S ${d.costUSD.toFixed(2)}</div><div class="msub">$${Math.round(d.costARS).toLocaleString('es-AR')}/unidad</div></div>
+      <div class="met"><div class="mlbl">Break-even ML</div><div class="mval b">$${Math.round(d.breakARS).toLocaleString('es-AR')}</div><div class="msub">U$S ${d.breakEven.toFixed(1)} — sin ganar</div></div>
+      <div class="met"><div class="mlbl">Tu precio objetivo</div><div class="mval g">$${Math.round(d.targetARS).toLocaleString('es-AR')}</div><div class="msub">con ${Math.round(d.marg*100)}% margen</div></div>
+      <div class="met"><div class="mlbl">Ganancia / unidad</div><div class="mval g">U$S ${(d.targetP*d.netFactor*d.marg).toFixed(2)}</div><div class="msub">$${Math.round(d.targetP*d.netFactor*d.marg*d.tc).toLocaleString('es-AR')} al precio obj.</div></div>
       ${mktMetrics}
     </div>
 
@@ -674,107 +638,35 @@ function renderAnalysis(d) {
         <div class="brow"><span class="blbl">Comisión ML (${Math.round(d.comm*100)}%)</span><span class="bval">U$S ${(d.targetP*d.comm).toFixed(2)}</span></div>
         <div class="brow"><span class="blbl">Publicidad ML (3%)</span><span class="bval">U$S ${(d.targetP*0.03).toFixed(2)}</span></div>
         <div class="brow"><span class="blbl">Envío ML (4%)</span><span class="bval">U$S ${(d.targetP*0.04).toFixed(2)}</span></div>
-        <div class="btot">
-          <span class="l">Ganancia neta (precio objetivo)</span>
-          <span class="v">U$S ${(d.targetP*d.netFactor*d.marg).toFixed(2)}</span>
-        </div>
+        <div class="btot"><span class="l">Ganancia neta (precio objetivo)</span><span class="v">U$S ${(d.targetP*d.netFactor*d.marg).toFixed(2)}</span></div>
       </div>
-
       <div class="card">
         <div class="chead"><h3>📌 Próximos pasos</h3></div>
-        <ul class="orlist">${recItems}</ul>
+        <ul class="orlist">${(recs[d.verdict]||[]).map(r=>`<li>→ ${r}</li>`).join('')}</ul>
       </div>
     </div>
 
-    <div class="footnote">
-      * TC $${d.tc.toLocaleString('es-AR')}. ${d.hasComps ? 'Datos de competidores obtenidos en tiempo real de la API pública de Mercado Libre Argentina.' : 'Sin datos de competidores — análisis basado solo en costos.'} Validá con tu freight forwarder antes de confirmar el pedido.
-    </div>
+    <div class="footnote">* TC $${d.tc.toLocaleString('es-AR')}. ${d.hasComps?'Datos obtenidos en tiempo real de la API oficial de Mercado Libre Argentina.':'Sin competidores — análisis basado en costos.'} Validá con tu freight forwarder antes de confirmar.</div>
   `;
 }
 
-// ─────────────────────────────────────────
-// UTILS
-// ─────────────────────────────────────────
+// ─── UTILS ────────────────────────────────
 function setErr(msg) {
   const el = document.getElementById('errBox');
+  if (!el) return;
   el.textContent = msg; el.classList.toggle('on', !!msg);
 }
-
 function setLoader(on, msg='') {
   document.getElementById('lmsg').textContent = msg;
   document.getElementById('loader').classList.toggle('on', on);
 }
-
 function setProgress(pct) {
   const prog = document.getElementById('prog');
   const bar  = document.getElementById('pbar');
-  if (pct === 0) { prog.classList.remove('on'); bar.style.width = '0'; return; }
-  prog.classList.add('on'); bar.style.width = pct + '%';
+  if (!prog) return;
+  if (pct===0) { prog.classList.remove('on'); bar.style.width='0'; return; }
+  prog.classList.add('on'); bar.style.width = pct+'%';
 }
 </script>
-
-<!-- ═══════════════════════════════════════════
-     GUÍA DE DEPLOY — GitHub Pages
-     ═══════════════════════════════════════════ -->
-<div style="background:#1a1612;color:#f7f4ef;padding:48px 40px;font-family:'Syne',sans-serif;">
-  <div style="max-width:680px;margin:0 auto;">
-
-    <div style="font-family:'Inconsolata',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:#e8410a;margin-bottom:12px;">Guía de deploy</div>
-    <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">Cómo subir a GitHub Pages</h2>
-    <p style="font-family:'Lora',serif;font-style:italic;font-size:14px;color:#888;margin-bottom:32px;line-height:1.6;">5 pasos · 5 minutos · gratis para siempre</p>
-
-    <div style="display:flex;flex-direction:column;gap:20px;">
-
-      <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;background:#e8410a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">1</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Crear repositorio en GitHub</div>
-          <div style="font-size:13px;color:#999;line-height:1.6;">Entrá a <span style="color:#f5c842;font-family:'Inconsolata',monospace;">github.com</span> → New repository → Nombre: <span style="color:#f5c842;font-family:'Inconsolata',monospace;">molmom-analyzer</span> → Public → Create</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;background:#e8410a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">2</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Subir el archivo</div>
-          <div style="font-size:13px;color:#999;line-height:1.6;">En el repo → <span style="color:#f5c842;font-family:'Inconsolata',monospace;">Add file → Upload files</span> → arrastrá el archivo <span style="color:#f5c842;font-family:'Inconsolata',monospace;">analizador-producto.html</span> → Commit changes</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;background:#e8410a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">3</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Renombrarlo a index.html</div>
-          <div style="font-size:13px;color:#999;line-height:1.6;">En el repo hacé clic en el archivo → el ícono del lápiz (edit) → cambiá el nombre a <span style="color:#f5c842;font-family:'Inconsolata',monospace;">index.html</span> → Commit</div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;background:#e8410a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">4</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Activar GitHub Pages</div>
-          <div style="font-size:13px;color:#999;line-height:1.6;"><span style="color:#f5c842;font-family:'Inconsolata',monospace;">Settings → Pages → Source: Deploy from branch → Branch: main → / (root) → Save</span></div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;background:#2d6a4f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;">✓</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">¡Listo! Tu URL queda:</div>
-          <div style="font-size:13px;color:#f5c842;font-family:'Inconsolata',monospace;line-height:1.6;">https://TU-USUARIO.github.io/molmom-analyzer/</div>
-          <div style="font-size:12px;color:#777;margin-top:4px;">Compartila con los 4 del equipo. Funciona desde cualquier celular o PC.</div>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="margin-top:32px;background:#111;border:1px solid #333;border-radius:8px;padding:16px 20px;">
-      <div style="font-family:'Inconsolata',monospace;font-size:10px;color:#e8410a;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">Por qué funciona hosteado y no como archivo local</div>
-      <div style="font-size:12px;color:#999;line-height:1.6;">Los navegadores bloquean llamadas a APIs externas desde archivos <span style="color:#aaa;font-family:'Inconsolata',monospace;">file://</span> por seguridad (política CORS). Cuando la app está en un servidor real como GitHub Pages, las llamadas a <span style="color:#aaa;font-family:'Inconsolata',monospace;">api.mercadolibre.com</span> pasan sin problema porque ML permite requests desde cualquier origen en su API pública.</div>
-    </div>
-
-  </div>
-</div>
-
 </body>
 </html>
